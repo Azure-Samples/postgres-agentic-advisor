@@ -38,7 +38,7 @@
         "azd": {
           "type": "location",
           "usageName": [
-            "OpenAI.GlobalStandard.gpt-5, 150",
+            "OpenAI.GlobalStandard.gpt-4o, 150",
             "OpenAI.GlobalStandard.text-embedding-3-small, 70"
           ]
         },
@@ -62,7 +62,7 @@
     },
     "azureOpenAIAPIVersion": {
       "type": "string",
-      "defaultValue": "2025-01-01-preview",
+      "defaultValue": "2024-10-21",
       "metadata": {
         "description": "Version of the Azure OpenAI API to use for chat models"
       }

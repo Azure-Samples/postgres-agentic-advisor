@@ -23,7 +23,6 @@ import type { TemplateSegment } from '@/components/InputField';
 import { useChatAgentsGraphQuery } from '@/api/hooks/useChatAgentsGraph';
 import { useToast } from '@/components/Toast';
 import { getInitials } from '@/features/alerts/utils/alertSummaryUtils';
-import { formatRiskProfile } from '@/utils/clientUtils';
 import { getClientAvatarUrl } from '@/utils/clientAvatarMap';
 import type { ChatSession } from '@/api/types/completion.types';
 import type { AlertAgentsGraph } from '@/api/types/alert.types';
@@ -413,7 +412,7 @@ export const AskAiMeetingModal: React.FC<AskAiMeetingModalProps> = ({ isOpen, on
                   ) : riskProfile ? (
                     <RiskProfileBadge>
                       <RiskProfileIcon aria-hidden="true" />
-                      <RiskProfileLabel>{formatRiskProfile(riskProfile)}</RiskProfileLabel>
+                      <RiskProfileLabel>{riskProfile}</RiskProfileLabel>
                     </RiskProfileBadge>
                   ) : null}
                 </MeetingClientLeft>

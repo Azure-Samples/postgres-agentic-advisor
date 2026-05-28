@@ -4,7 +4,7 @@ import { getClientAvatarUrl } from '@/utils/clientAvatarMap';
 
 export const filterBySearch = (clients: ClientListRow[], searchQuery: string): ClientListRow[] => {
   if (!searchQuery) return clients;
-
+  
   const normalizedQuery = searchQuery.toLowerCase();
   return clients.filter((client) => client.name.toLowerCase().includes(normalizedQuery));
 };
@@ -115,18 +115,6 @@ export function mapSortToApi(sortValue: string): ClientSortValue {
     risk: 'risk',
   };
   return map[sortValue] ?? 'default';
-}
-
-/**
- * Maps raw risk-profile labels from the API to the display-friendly form.
- * Currently rewrites "Conservative" to "Risk-adverse"; all other values
- * (and null/empty) are passed through unchanged.
- */
-export function formatRiskProfile<T extends string | null | undefined>(value: T): T {
-  if (value && value.toLowerCase() === 'conservative') {
-    return 'Risk-adverse' as T;
-  }
-  return value;
 }
 
 /**

@@ -17,7 +17,6 @@ import {
 } from '../AlertSummaryModal.styles';
 import { formatCurrency, getInitials } from '../utils/alertSummaryUtils';
 import { getClientAvatarUrl } from '@/utils/clientAvatarMap';
-import { formatRiskProfile } from '@/utils/clientUtils';
 
 interface ClientInfoSectionProps {
   clientName: string;
@@ -61,7 +60,7 @@ export const ClientInfoSection: React.FC<ClientInfoSectionProps> = ({
           {riskProfile && (
             <RiskProfileBadge>
               <FlameSmallIcon style={{ color: '#f06a2f' }} />
-              <RiskProfileText>{formatRiskProfile(riskProfile)}</RiskProfileText>
+              <RiskProfileText>{riskProfile}</RiskProfileText>
             </RiskProfileBadge>
           )}
         </ClientInfoLeft>

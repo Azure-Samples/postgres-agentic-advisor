@@ -21,7 +21,6 @@ import {
   DropdownDivider,
 } from './Navbar.styles';
 import { BellIcon, GenAiIcon, ResetIcon } from '@/icons';
-import logoIconUrl from '@/icons/aa-new.png';
 import { ROUTE_PATTERNS } from '@/constants/navigation';
 import { useResetMutation } from '@/api/hooks/useResetMutation';
 
@@ -159,7 +158,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, style }) => {
     <NavbarContainer className={className} style={style}>
       <NavbarLeft>
         <LogoContainer>
-          <LogoIcon src={logoIconUrl} alt="Agentic Advisor logo" />
+          <LogoIcon>A</LogoIcon>
           <LogoText>Agentic Advisor</LogoText>
         </LogoContainer>
       </NavbarLeft>

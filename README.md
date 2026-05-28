@@ -129,7 +129,7 @@ The `azd` workflow will prompt you to select a subscription, region, and resourc
 
 | Model | Quota Required | Parameter |
 |---|---|---|
-| GPT-5 | 150K TPM | `AZURE_OPENAI_CHAT_DEPLOYMENT_CAPACITY` |
+| GPT-4o | 150K TPM | `AZURE_OPENAI_CHAT_DEPLOYMENT_CAPACITY` |
 | text-embedding-3-small | 70K TPM | `AZURE_OPENAI_EMBED_DEPLOYMENT_CAPACITY` |
 
 > Deployment typically takes several minutes. Progress is displayed in the terminal and trackable via the Azure Portal.
@@ -176,7 +176,7 @@ The following diagram shows the high-level architecture of the solution, highlig
 - **Backend**
   - **FastAPI** for API and orchestration logic
   - **LangChain** for multi-agent orchestration and tool routing
-  - **Azure OpenAI (GPT-5 and text-embedding-3-small)** for agent reasoning
+  - **Azure OpenAI (GPT-4o and text-embedding-3-small)** for agent reasoning
   - **Azure Key Vault** for secrets management
   - **Apache AGE Extension** for graph-based company relationship queries
   - **`azure_ai` Extension** for in-database NLP and news analysis

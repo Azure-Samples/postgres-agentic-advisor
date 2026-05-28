@@ -21,7 +21,7 @@ param environmentName string = name
   azd: {
     type: 'location'
     usageName : [
-      'OpenAI.GlobalStandard.gpt-5, 150'
+      'OpenAI.GlobalStandard.gpt-4o, 150'
       'OpenAI.GlobalStandard.text-embedding-3-small, 70'
     ]
   }
@@ -35,7 +35,7 @@ param deployAzureOpenAI bool = true
 param deployContentFilter bool = true
 
 @description('Version of the Azure OpenAI API to use for chat models')
-param azureOpenAIAPIVersion string = '2025-01-01-preview'
+param azureOpenAIAPIVersion string = '2024-10-21'
 
 @description('Version of the Azure OpenAI API to use for embedding models')
 param azureEmbedAIAPIVersion string = '2024-10-21'

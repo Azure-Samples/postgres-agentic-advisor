@@ -28,12 +28,17 @@ export const LogoContainer = styled.div`
   gap: ${({ theme }) => theme.spacing[2]};
 `;
 
-export const LogoIcon = styled.img`
-  width: 60px;
-  height: 60px;
+export const LogoIcon = styled.div`
+  width: 40px;
+  height: 40px;
+  background: ${({ theme }) => theme.colors.logoGradient};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
-  object-fit: contain;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.primary};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  font-size: ${({ theme }) => theme.typography.fontSize['2xl']};
 `;
 
 export const LogoText = styled.span`
@@ -65,9 +70,9 @@ export const NavLink = styled.button<{ $isActive?: boolean }>`
   height: 100%;
   position: relative;
   font-size: ${({ theme }) => theme.typography.fontSize.base};
-  font-weight: ${({ theme, $isActive }) =>
+  font-weight: ${({ theme, $isActive }) => 
     $isActive ? theme.typography.fontWeight.semibold : theme.typography.fontWeight.normal};
-  color: ${({ theme, $isActive }) =>
+  color: ${({ theme, $isActive }) =>  
     $isActive ? theme.colors.primary : theme.colors.navLinkSecondary};
   transition: color 0.2s ease;
   line-height: 114%;

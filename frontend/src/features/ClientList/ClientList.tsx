@@ -7,7 +7,6 @@ import { ChipList } from '@/components/ChipList';
 import { RiskProfileIcon } from '@/icons';
 import { Pagination } from './Pagination';
 import { getAvatarColor, getInitials } from '@/utils/clientAvatarMap';
-import { formatRiskProfile } from '@/utils/clientUtils';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -209,7 +208,7 @@ const columns: ColumnsType<TableRowType> = [
       return (
         <div className="risk-profile">
           {record.riskProfile !== 'None' && getRiskProfileIcon()}
-          <span>{formatRiskProfile(record.riskProfile)}</span>
+          <span>{record.riskProfile}</span>
         </div>
       );
     },
