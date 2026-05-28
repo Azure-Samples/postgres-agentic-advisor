@@ -1,0 +1,1 @@
+export { MarketSectorTrends } from './MarketSectorTrends';

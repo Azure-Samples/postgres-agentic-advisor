@@ -1,0 +1,7 @@
+sec_file_id,ticker_id,ticker,name,title,sec_file_url,markdown_url
+1,1,EDUC,"EduCare Corp.","EduCare 10-K 2023",data/sec_files/EDUC_10-K_2023_anonymized.pdf,data/sec_files/EDUC_10-K_2023_anonymized.md
+2,2,AWKS,"Adventure Works Analytics Holdings","Adventure Works 10-K 2023",data/sec_files/AWKS_10-K_2023_anonymized.pdf,data/sec_files/AWKS_10-K_2023_anonymized.md
+3,5,NWND,"Northwind","NorthWind 10-K 2023",data/sec_files/NWND_10-K_2023_anonymized.pdf,data/sec_files/NWND_10-K_2023_anonymized.md
+4,3,ZVTC,"Zava Technologies","Zava Technologies 10-K 2023",data/sec_files/ZVTC_10-K_2023_anonymized.pdf,data/sec_files/ZVTC_10-K_2023_anonymized.md
+5,4,NFEQ,"NanoFab Equipment","NanoFab Equipment 10-K 2023",data/sec_files/NFEQ_10-K_2023_anonymized.pdf,data/sec_files/NFEQ_10-K_2023_anonymized.md
+6,6,CCMP,"Contose Compute","Contose Compute 10-K 2023",data/sec_files/CCMP_10-K_2023_anonymized.pdf,data/sec_files/CCMP_10-K_2023_anonymized.md

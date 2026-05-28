@@ -1,0 +1,12 @@
+id,ticker,name,exchange,sector,industry,description,extra_metadata,earnings_date,has_data
+1,EDUC,EduCare,NYSE,Information Technology,Software & Services,AI-powered student learning platform,{},2023-12-12,true
+2,AWKS,Adventure Works,NYSE,Information Technology,Software & Services,Enterprise analytics for financial institutions,{},2023-12-19,true
+3,ZVTC,Zava Technologies,NASDAQ,Information Technology,Semiconductors & Semiconductor Equipment,Supplies process materials to chip manufacturers,{},2023-11-18,true
+4,NFEQ,NanoFab Equipment,NASDAQ,Information Technology,Semiconductors & Semiconductor Equipment,Builds precision semiconductor fabrication equipment,{},2023-12-05,true
+5,NWND,Northwind,NASDAQ,Information Technology,Semiconductors & Semiconductor Equipment,Designs and sells memory chips,{},2023-10-24,true
+6,CCMP,Contoso Compute,NASDAQ,Information Technology,Semiconductors & Semiconductor Equipment,Makes GPUs for AI computing,{},2023-11-30,true
+7,VREX,Veridia Exchange Corp,NYSE,Financials,Capital Markets,Diversified financial exchange and clearing services provider,{},2024-01-15,false
+8,PLNX,Planex Holdings,NASDAQ,Industrials,Industrial Conglomerates,Global industrial manufacturing and supply chain solutions,{},2024-02-20,false
+9,MRCL,Mercurial Logistics,NYSE,Industrials,Air Freight & Logistics,Integrated freight forwarding and logistics network operator,{},2024-03-10,false
+10,SVNT,Savant Systems,NASDAQ,Information Technology,IT Services,Enterprise software integration and managed IT services,{},2024-01-30,false
+11,BRVN,Brevant Capital,NYSE,Financials,Diversified Financial Services,Multi-asset investment management and advisory services,{},2024-02-28,false

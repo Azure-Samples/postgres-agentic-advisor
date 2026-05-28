@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "principalName": {
+      "value": "${AZURE_PRINCIPAL_NAME=}"
+    },
+    "deployAzureOpenAI": {
+      "value": "${DEPLOY_AZURE_OPENAI=true}"
+    },
+    "deployContentFilter": {
+      "value": "${DEPLOY_CONTENT_FILTER=true}"
+    },
+    "chatModelName": {
+      "value": "${AZURE_OPENAI_CHAT_MODEL=gpt-5}"
+    },
+    "chatDeploymentName": {
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-5}"
+    },
+    "chatDeploymentVersion": {
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT_VERSION=2025-08-07}"
+    },
+    "chatDeploymentSku": {
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT_SKU=GlobalStandard}"
+    },
+    "chatDeploymentCapacity": {
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT_CAPACITY=150}"
+    },
+    "embedModelName": {
+      "value": "${AZURE_OPENAI_EMBED_MODEL=text-embedding-3-small}"
+    },
+    "embedDeploymentName": {
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT=text-embedding-3-small}"
+    },
+    "embedDeploymentVersion": {
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT_VERSION=}"
+    },
+    "embedDeploymentSku": {
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT_SKU=GlobalStandard}"
+    },
+    "embedDeploymentCapacity": {
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT_CAPACITY=70}"
+    },
+    "deployerPublicIp": {
+      "value": "${DEPLOYER_PUBLIC_IP=}"
+    }
+  }
+}

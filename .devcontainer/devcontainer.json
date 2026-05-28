@@ -1,0 +1,83 @@
+{
+    "name": "Agentic Advisor",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "agentic-shop",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/agentic-advisor,type=bind,consistency=cached",
+    "workspaceFolder": "/agentic-advisor",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "22.14"
+        },
+         "ghcr.io/devcontainers/features/azure-cli:1": {
+            "installBicep": "true"
+        },
+        "ghcr.io/azure/azure-dev/azd:latest": {},
+        "ghcr.io/rchaganti/vsc-devcontainer-features/azurebicep:1": {},
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/robbert229/devcontainer-features/postgresql-client:1": {},
+        "ghcr.io/devcontainers/features/powershell:1": {}
+    },
+    "remoteEnv": {
+        // We add the .venv to the beginning of the path env in the Dockerfile
+		// so that we use the proper python, however vscode rewrites/overwrites
+		// the PATH in the image and puts /usr/local/bin in front of our .venv
+		// path. This fixes that issue.
+		"PATH": "${containerEnv:PATH}",
+        // Add src folder to PYTHONPATH so that we can import modules that
+        // are in the source dir
+        "PYTHONPATH": "/agentic-advisor/backend/:$PATH"
+        // disable SSL verification for Azure CLI if working in CodeSpaces
+        // "AZURE_CLI_DISABLE_CONNECTION_VERIFICATION": "1"
+    },
+    "mounts": [
+        // Mounts the ssh details from the host machine - this allows the container to connect to ssh hosts
+        "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh",
+        // Mount docker socket for docker builds
+        "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+        // Mount bash history
+        "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history"
+    ],
+    "runArgs": [
+        "--network=agentic-net"
+    ],
+    "forwardPorts": [
+        8000,
+        5173,
+        4317,
+        6006
+    ],
+    "remoteUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+                "python.languageServer": "Pylance",
+                "files.watcherExclude": {
+                    "**/.git/objects/**": true,
+                    "**/.git/subtree-cache/**": true,
+                    "**/node_modules/*/**": true,
+                    "**/.python_packages/*/**": true
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.debugpy",
+                "ms-python.pylint",
+                "ms-python.black-formatter",
+                "ms-python.vscode-pylance",
+                "ms-azuretools.vscode-docker",
+                "ms-azuretools.azure-dev",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "donjayamanne.githistory",
+                "codezombiech.gitignore",
+                "ms-azuretools.vscode-bicep",
+                "ziyasal.vscode-open-in-github",
+                "ms-ossdata.vscode-pgsql"
+            ]
+        }
+    },
+    "postCreateCommand": "bash ./.devcontainer/entrypoint.sh"
+}

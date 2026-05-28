@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: agentic-advisor
+
+description: Agentic Advisor Backend API
+metadata:
+    template: agentic-advisor@0.0.1
+requiredVersions:
+    azd: ">= 1.15.0"
+
+hooks:
+    preprovision:
+            shell: pwsh         # run on pwsh
+            interactive: true
+            continueOnError: false
+            run: |
+                Write-Host "Running capacity validation..." -ForegroundColor Yellow
+                ./azd-hooks/preprovision-checklist.ps1
+                if ($LASTEXITCODE -ne 0) {
+                    # Validation failed - script already showed error and cleaned up
+                    exit $LASTEXITCODE
+                }
+                Write-Host "Capacity validation completed successfully!" -ForegroundColor Green
+                Write-Host "Running environment setup..." -ForegroundColor Yellow
+                ./azd-hooks/preprovision.ps1
+    postprovision:
+            shell: pwsh         # run on pwsh
+            interactive: true
+            continueOnError: false
+            run: |
+                ./azd-hooks/postprovision.ps1
+
+workflows:
+  up:
+    steps:
+      - azd: provision
+
+infra:
+    bicep: ./infra/main.bicep
+
+services:
+    frontend:
+        project: ./frontend
+        language: ts
+        module: frontend
+        host: containerapp
+        docker:
+            registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+            remoteBuild: true
+        hooks:
+            prebuild:
+                shell: pwsh
+                interactive: true
+                continueOnError: false
+                run: |
+                    Write-Host "[prebuild] Preparing .env.local for Vite" -ForegroundColor Cyan
+                    $apiUrl = azd env get-value SERVICE_BACKEND_URI
+                    if (-not $apiUrl -or $apiUrl.Trim() -eq '') {
+                        Write-Host "[prebuild] SERVICE_BACKEND_URI empty; using placeholder http://localhost:8000" -ForegroundColor Yellow
+                        $apiUrl = 'http://localhost:8000'
+                    }
+                    # Ensure trailing slash
+                    if ($apiUrl[-1] -ne '/') { $apiUrl = "$apiUrl/" }
+                    $line = "VITE_API_BASE_URL=$apiUrl"
+                    Set-Content -Path .\\.env.local -Value $line -NoNewline
+                    Write-Host "[prebuild] Wrote .env.local => $line" -ForegroundColor Green
+        dependsOn:
+            - infra
+    backend:
+        project: ./backend
+        language: py
+        module: backend
+        host: containerapp
+        docker:
+            registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+            remoteBuild: true
+        dependsOn:
+            - infra
+    arize:
+        project: ./arize-phoenix
+        language: py
+        module: arize
+        host: containerapp
+        docker:
+            registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+            remoteBuild: true

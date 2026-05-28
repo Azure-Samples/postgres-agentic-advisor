@@ -1,0 +1,16 @@
+{
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "pylint.enabled": true,
+    "pylint.cwd": "${workspaceFolder}/backend",
+    "pylint.args": [
+        "--rcfile=${workspaceFolder}/backend/.pylintrc"
+    ],
+    "debug.internalConsoleOptions": "neverOpen",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+}

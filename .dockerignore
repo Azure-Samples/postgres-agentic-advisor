@@ -1,0 +1,39 @@
+# Python virtual environments (causes symlink issues)
+**/.venv/
+**/venv/
+**/env/
+**/__pycache__/
+
+# Node modules
+**/node_modules/
+
+# Git
+.git/
+.gitignore
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+**/dist/
+**/build/
+**/*.egg-info/
+
+# Logs
+*.log
+
+# Environment files (optional, keep if needed in container)
+# .env
+
+# Test/coverage
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+**/.tox/
+
+# OS files
+Thumbs.db
+.DS_Store

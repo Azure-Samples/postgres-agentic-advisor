@@ -1,0 +1,59 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "jsx": "react",
+    "outDir": "./dist",         // <-- compiled files go here
+    "rootDir": "./src",         // <--  TS source files go here
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": false,
+    "esModuleInterop": true,
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "components/*": [
+        "./src/components/*"
+      ],
+      "pages/*": [
+        "./src/pages/*"
+      ],
+      "public/*": [
+        "./public/*"
+      ],
+      "utils/*": [
+        "./src/utils/*"
+      ],
+      "icons/*": [
+        "./src/icons/*"
+      ],
+      "src/*": [
+        "./src/*"
+      ],
+      "constants/*": [
+        "./src/constants/*"
+      ],
+      "styles/*": [
+        "./src/styles/*"
+      ],
+      "services/*": [
+        "./src/services/*"
+      ],
+      "types/*": [
+        "./src/types/*"
+      ],
+      "hooks/*": [
+        "src/features/chat/components/hooks/*"
+      ]
+
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]  // avoid reprocessing compiled files
+
+}

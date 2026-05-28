@@ -1,0 +1,38 @@
+name,label,properties,id
+Patricia Warren,Person,"{""title"": ""Executive Vice President and Chief Financial Officer""}",55
+Financial District Center,Location,{},177
+Prism Digital Corp.,Company,{},87
+Datamatrix Analytics,Company,{},88
+Cloudpeak Data,Company,{},89
+ProcedureFlow Corp.,Company,{},90
+Apex AI Labs,Company,{},48
+Robert Haines,Person,"{""title"": ""CEO""}",111
+Global Systems Cloud,Location,{},95
+Global Systems Cloud Platform,Company,{},46
+Atlantic Database Systems,Company,{},81
+Adventure Works Analytics Holdings,Company,{},1
+Owen Whitfield,Person,"{""title"": ""Chief Financial Officer""}",6
+Daniel Reeves,Person,"{""title"": ""CEO""}",44
+Lucas Brennan,Person,"{""title"": ""Chief Revenue Officer""}",3
+United States,Location,{},22
+CWS,Company,{},45
+Nathan Reeves,Person,"{""title"": ""CEO""}",2
+EduCare Corp.,Company,{},110
+Contoso Compute Corporation,Company,{},53
+Summit Cloud,Company,{},47
+"Reno, Nevada",Location,{},203
+Legacy Learning Corp,Company,"{""stock_exchange"": ""LLCO""}",113
+Meridian AI Research,Company,{},67
+Global,Location,{},49
+Contoso Compute Solutions,Company,{},32
+Orion,Company,{},198
+Peak Semiconductor,Company,{},199
+Island Semiconductor Fabrication Company,Company,{},186
+Northwind,Company,"{""ticker"": ""NWND"", ""stock_exchange"": ""SECONDARY STOCK EXCHANGE""}",179
+Contoso Compute,Company,{},13
+Alpha Chip Group,Company,{},83
+James Harrington,Person,"{""title"": ""Chief Executive Officer""}",182
+The Primary Eastern Market,Location,{},195
+"Zava Technologies Group, Inc.",Company,{},218
+NanoFab Equipment Corporation,Company,{},213
+Stellar Dynamics,Company,{},216

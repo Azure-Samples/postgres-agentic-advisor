@@ -1,0 +1,26 @@
+# Python
+__pycache__
+*.py[cod]
+.venv/
+.pylintrc
+
+# Git
+.git
+.gitignore
+
+# Logs, builds, temp
+*.log
+build/
+dist/
+.vscode/
+.devcontainer/
+.idea/
+
+
+# Environments
+.env
+dev.env
+.venv
+env/
+venv/
+ENV/

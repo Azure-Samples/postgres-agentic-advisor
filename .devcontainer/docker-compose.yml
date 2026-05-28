@@ -1,0 +1,17 @@
+services:
+  agentic-shop:
+    build:
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/agentic-advisor:cached
+    ports:
+      - "8000:8000"
+      - "5173:5173"
+    networks:
+      - agentic-net
+
+networks:
+  agentic-net:
+    name: agentic-net
+    driver: bridge

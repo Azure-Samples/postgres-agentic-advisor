@@ -1,0 +1,7 @@
+id,primary_advisor_id,full_name,email,phone,age,profile,created_at
+1,1,Daniel Reed,daniel.reed@gmail.com,+12-34-23123,52,"{}",2025-07-09T16:21:16.686622+05:00
+2,1,Brian Thompson,brian.thompson@clientmail.com,+34-12-981235,38,"{""risk_preference"": ""Growth-oriented""}",2025-07-08T16:21:16.686622+05:00
+3,1,Ashley Cooper,ashley.cooper@clientmail.com,+44-20-987654,35,"{""risk_preference"": ""Conservative""}",2025-07-08T16:21:16.686622+05:00
+4,1,Emily Parker,emily.parker@clientmail.com,+1-555-101001,40,"{""risk_preference"": ""Growth-oriented""}",2025-07-08T16:21:16.686622+05:00
+5,1,Megan Sullivan,megan.sullivan@clientmail.com,+1-555-101002,36,"{""risk_preference"": ""Balanced""}",2025-07-08T16:21:16.686622+05:00
+6,1,James Anderson,james.anderson@clientmail.com,+1-555-101003,50,"{""risk_preference"": ""Growth-oriented""}",2025-07-08T16:21:16.686622+05:00
