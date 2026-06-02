@@ -224,33 +224,6 @@ export const InsightContent: React.FC<InsightContentProps> = ({
           </ImpactSummaryRow>
         )}
 
-        {/* ── Sources ── */}
-        {hasSources && (
-          <div>
-            <InsightSourcesHeader>
-              <LinkIcon width={20} height={20} style={{ color: '#292A31' }} />
-              <InsightSourcesLabel>Sources</InsightSourcesLabel>
-            </InsightSourcesHeader>
-            <InsightSourcesContainer style={{ marginTop: '12px' }}>
-              {sources!.map((source, idx) => {
-                const sourceObj = typeof source === 'string' ? null : (source as AlertSourceObject);
-                const isClickable = !!alertId && !!sourceObj?.id;
-                return (
-                  <InsightSourceChip
-                    key={`${getSourceLabel(source)}-${idx}`}
-                    type="button"
-                    disabled={!isClickable}
-                    onClick={isClickable ? () => setSelectedSource(sourceObj!) : undefined}
-                    style={!isClickable ? { cursor: 'default' } : undefined}
-                  >
-                    {getSourceLabel(source)}
-                  </InsightSourceChip>
-                );
-              })}
-            </InsightSourcesContainer>
-          </div>
-        )}
-
         {/* ── Source viewer (full-screen) ── */}
         <SourceViewerModal
           isOpen={!!selectedSource}

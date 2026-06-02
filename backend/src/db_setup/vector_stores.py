@@ -8,11 +8,13 @@ collection is only populated when it doesn't already exist.
 
 import asyncio
 import csv
+import json
 import logging
 import math
 import time
 from pathlib import Path
 
+import psycopg2
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from langchain_azure_postgresql.common import (
     AzurePGConnectionPool,
@@ -122,18 +124,32 @@ async def _seed_collection(
         )
         return
 
-    logger.info("Building vector store collection: %r", collection_name)
-    await asyncio.to_thread(
-        _insert_file_by_file,
-        csv_file=csv_file,
-        pdf_url_field=pdf_url_field,
-        doc_id_field=doc_id_field,
-        doc_id_metadata_key=doc_id_metadata_key,
-        embedding_model=embedding_model,
-        db_url=db_url,
-        collection_name=collection_name,
-        batch_size=batch_size,
-    )
+    precomputed_csv = _SEED_DIR / f"{collection_name}_embeddings.csv"
+    if precomputed_csv.exists():
+        logger.info(
+            "Loading %r from pre-computed embeddings: %s",
+            collection_name,
+            precomputed_csv,
+        )
+        await asyncio.to_thread(
+            _load_from_precomputed_csv,
+            csv_file=precomputed_csv,
+            collection_name=collection_name,
+            batch_size=batch_size,
+        )
+    else:
+        logger.info("Building vector store collection: %r", collection_name)
+        await asyncio.to_thread(
+            _insert_file_by_file,
+            csv_file=csv_file,
+            pdf_url_field=pdf_url_field,
+            doc_id_field=doc_id_field,
+            doc_id_metadata_key=doc_id_metadata_key,
+            embedding_model=embedding_model,
+            db_url=db_url,
+            collection_name=collection_name,
+            batch_size=batch_size,
+        )
     logger.info("Finished populating collection: %r", collection_name)
 
 
@@ -161,6 +177,100 @@ async def _collection_exists(engine: AsyncEngine, collection_name: str) -> bool:
             return rows.first() is not None
     except Exception:
         return False
+
+
+def _load_from_precomputed_csv(
+    *,
+    csv_file: Path,
+    collection_name: str,
+    batch_size: int,
+) -> None:
+    """
+    Create the vector store table and bulk-insert pre-computed embeddings from CSV.
+
+    The CSV must have columns: id, content, embedding, metadata.
+    The embedding column must be a PostgreSQL vector literal, e.g. [0.1,0.2,...].
+    No embedding API calls are made — embeddings are inserted as-is.
+    """
+    # Let AzurePGVectorStore own schema creation — creates id as uuid primary key
+    # with the DiskANN index config the app expects via _ensure_table_verified.
+    _pool = AzurePGConnectionPool(
+        azure_conn_info=ConnectionInfo(
+            host=settings.DB_HOST,
+            dbname=settings.DB_NAME,
+            credentials=BasicAuth(
+                username=settings.DB_USER,
+                password=settings.DB_PASSWORD,
+            ),
+        ),
+        open=True,
+    )
+    vector_store = AzurePGVectorStore(
+        connection=_pool,
+        embedding=None,
+        table_name=collection_name,
+        schema_name="public",
+        id_column="id",
+        content_column="content",
+        embedding_column="embedding",
+        metadata_columns="metadata",
+        embedding_type=VectorType.vector,
+        embedding_dimension=settings.AZURE_OPENAI_EMBEDDING_MODEL_DIMS,
+        embedding_index=DiskANN(),
+    )
+
+    conn = psycopg2.connect(
+        host=settings.DB_HOST,
+        dbname=settings.DB_NAME,
+        user=settings.DB_USER,
+        password=settings.DB_PASSWORD,
+        port=int(settings.DB_PORT),
+        sslmode=settings.DB_SSLMODE,
+    )
+
+    try:
+        with csv_file.open(encoding="utf-8") as fh:
+            rows = list(csv.DictReader(fh))
+
+        total = len(rows)
+        total_batches = math.ceil(total / batch_size) if total else 0
+        logger.info("  %d rows to insert in %d batches", total, total_batches)
+
+        for i in range(0, total, batch_size):
+            batch = rows[i : i + batch_size]
+            batch_num = i // batch_size + 1
+            logger.info(
+                "  Batch %d / %d for %r",
+                batch_num,
+                total_batches,
+                collection_name,
+            )
+            with conn.cursor() as cur:
+                cur.executemany(
+                    f'INSERT INTO public."{collection_name}" (id, content, embedding, metadata) '
+                    f"VALUES (%s::uuid, %s, %s::vector, %s::jsonb) ON CONFLICT (id) DO NOTHING",
+                    [
+                        (
+                            r["id"],
+                            r["content"],
+                            r["embedding"],
+                            r["metadata"] if r["metadata"] else json.dumps({}),
+                        )
+                        for r in batch
+                    ],
+                )
+            conn.commit()
+
+        logger.info(
+            "Loaded %d rows into %r from pre-computed CSV",
+            total,
+            collection_name,
+        )
+    finally:
+        conn.close()
+
+    vector_store.create_index()
+    _pool.close()
 
 
 def _insert_file_by_file(

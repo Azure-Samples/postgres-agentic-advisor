@@ -16,3 +16,17 @@ export const StyledContent = styled(Content)`
   padding: 14px ${({ theme }) => theme.spacing[8]} ${({ theme }) => theme.spacing[8]};
   width: 100%;
 `;
+
+export const DisclaimerBar = styled.div`
+  width: 100%;
+  height: 27px;
+  border-top: 1px solid #EFEFEF;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  color: #617692;
+  line-height: normal;
+`;

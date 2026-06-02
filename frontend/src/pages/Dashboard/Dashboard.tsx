@@ -22,11 +22,11 @@ const getDefaultDate = (): Date => {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 };
 
-/** Parse a 'MM-DD' URL param into a local Date (base year 2023), falling back to today. */
-const parseDateParam = (value: string | null): Date => {
-  if (!value) return getDefaultDate();
+/** Parse a 'MM-DD' URL param into a local Date (base year 2023), or null if absent. */
+const parseDateParam = (value: string | null): Date | null => {
+  if (!value) return null;
   const parsed = new Date(`2023-${value}T00:00:00`);
-  return isNaN(parsed.getTime()) ? getDefaultDate() : parsed;
+  return isNaN(parsed.getTime()) ? null : parsed;
 };
 
 /** Serialize a Date to 'MM-DD' for use as a URL search param (no year shown in URL). */
@@ -36,11 +36,12 @@ const serializeDateParam = (date: Date): string => {
   return `${m}-${d}`;
 };
 
-/** Always map the selected date to a 2023 simulated date for the backend. */
-const toSimulatedDateParam = (date: Date): string => {
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `2023-${m}-${d}`;
+/** Always map the selected date to a 2023 simulated date for the backend. Falls back to default when null. */
+const toSimulatedDateParam = (date: Date | null): string => {
+  const d = date ?? getDefaultDate();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `2023-${m}-${day}`;
 };
 
 const Dashboard: React.FC = () => {

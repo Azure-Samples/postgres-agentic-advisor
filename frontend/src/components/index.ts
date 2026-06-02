@@ -22,3 +22,4 @@ export * from './ErrorBoundary';
 export * from './Skeleton';
 export * from './CardBlock';
 export * from './Calendar';
+export * from './AppInitializationOverlay/AppInitializationOverlay';

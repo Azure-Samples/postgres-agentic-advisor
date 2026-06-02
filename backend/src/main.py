@@ -110,3 +110,8 @@ app.include_router(reset.router)
 async def get():
     """API welcome message."""
     return {"message": "Welcome to the Agentic Advisor API!"}
+
+
+@app.get("/health/ready", include_in_schema=False)
+async def health():
+    return {"status": "ready"}

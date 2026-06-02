@@ -1,12 +1,12 @@
 # 📈 Agentic Advisor: AI-Powered Financial Advisory at Your Fingertips
 
-> **See multi-agent AI make proactive, personalized investment decisions**
+### See Multi-Agent AI Make Proactive, Personalized Investment Decisions
 
 Agentic Advisor is a GenAI-powered financial advisory demo that showcases how **multi-agent workflows**, powered by [LangChain](https://www.langchain.com/), can drive **proactive, personalized investment advice**. It combines a **company relationship graph** (Apache AGE), **RAG over 10-K filings and news articles**, **historical stock data**, and **persistent client memory** (Mem0), all deployed on Azure in minutes with the **Azure Developer CLI**.
 
 Watch intelligent agents detect indirect risk from connected companies *before* it shows up in a stock the client owns, capture client preferences in natural language, and see a Planner Agent selectively trigger only the agents that matter, with full workflow transparency every step of the way.
 
----
+> 📖 **Walkthrough** — For a guided tour of the app's key features and scenarios, see [WALKTHROUGH.md](./WALKTHROUGH.md).
 
 ## 🧭 Quick Navigation
 
@@ -18,8 +18,6 @@ Watch intelligent agents detect indirect risk from connected companies *before* 
 - [Smart Query Routing](#-smart-query-routing-via-tool-enabled-agent)
 - [Understanding What Queries Work](#-understanding-what-queries-work-and-why)
 - [Sample Queries](#-sample-queries-that-work)
-
----
 
 ## 🌟 What is Agentic Advisor?
 
@@ -63,8 +61,6 @@ The frontend features a live **Show Workflow UI** that gives real-time visibilit
 - 💡 **Proactive buy/sell/hold advice** grounded in multi-source reasoning and personalized via Mem0
 - 👤 **Client preferences captured in natural language** and persisted across sessions
 - 🔍 **Show Workflow UI** for live, end-to-end transparency into which agents ran and why
-
----
 
 ## 🚀 Quick Start: Deploy in Minutes
 
@@ -159,13 +155,11 @@ The `--purge` flag permanently deletes all accounts created by the deployment.
 - Check service logs and verify environment variables if you encounter runtime issues.
 - For Docker-based local runs, make sure Docker has sufficient resources allocated.
 
----
-
 ## 🏗️ Architecture Overview
 
 The following diagram shows the high-level architecture of the solution, highlighting how Azure services and components work together to power the agentic advisory experience.
 
-![Azure Architecture Diagram](./docs/imgs/architecture-placeholder.png)
+![Azure Architecture Diagram](./docs/imgs/agentic_advisor_architecture.png)
 
 ### 🧩 Key Components
 
@@ -197,8 +191,6 @@ The entire solution deploys within a single **Azure Resource Group** using:
 - **Azure Key Vault**
 - **Bicep Templates**
 
----
-
 ## 🤖 Multi-Agent Advisory Workflow
 
 Agentic Advisor uses a modular, event-driven multi-agent system built on **LangChain** and **LangGraph** to generate personalized investment recommendations. Each agent has a clearly defined role, and they collaborate through structured tool calls and LangGraph `StateGraph` workflows to fulfill complex advisory requests.
@@ -206,7 +198,7 @@ Agentic Advisor uses a modular, event-driven multi-agent system built on **LangC
 Two distinct LangGraph workflows power the system:
 
 - **AskAI Workflow**: triggered by advisor chat queries. The Ask AI agent first decides whether the query can be answered directly (e.g., general questions) or needs to be passed to the Planning Agent. If passed, the Planning Agent resolves company names to tickers and decides which analysis agents to invoke in parallel. Once the analysis agents complete, Ask AI compiles and returns the final response.
-- **Alert Workflow**: triggered by market events. The **Event to Impact Mapping** node (not an agent) queries the **Apache AGE** company relationship graph to identify which stocks may be indirectly affected and classifies the connection type (e.g., `indirect_chain`). The **Planning Agent** then uses client preferences and risk profiles from Mem0 to decide which analysis agents to run in parallel. Finally, the **Risk Insight Agent** receives both the analysis outputs and the impact classification from Event to Impact Mapping, combining them with client portfolio context and Mem0 preferences to produce the final personalized advice, surfacing the indirect company relationship in the Advisor Insight.
+- **Alert Workflow**: triggered by market events. The **Client Impact Analysis** node (not an agent) queries the **Apache AGE** company relationship graph to identify which stocks may be indirectly affected and classifies the connection type (e.g., `indirect_chain`). The **Planning Agent** then uses client preferences and risk profiles from Mem0 to decide which analysis agents to run in parallel. Finally, the **Risk Insight Agent** receives both the analysis outputs and the impact classification from Client Impact Analysis, combining them with client portfolio context and Mem0 preferences to produce the final personalized advice, surfacing the indirect company relationship in the Advisor Insight.
 
 
 ### 🧠 Key Agents
@@ -217,7 +209,7 @@ Two distinct LangGraph workflows power the system:
 | **News Analysis Agent** | `news_analysis_agent.py` | RAG over news article PDFs to surface recent material events and key insights via pgvector. Runs in parallel with SEC Filing Analysis and Stock Analysis. |
 | **SEC Filing Analysis Agent** | `sec_filing_analysis_agent.py` | RAG over 10-K SEC report PDFs to retrieve and synthesize fundamentals, risk factors, and outlook. Runs in parallel with News Analysis and Stock Analysis. |
 | **Stock Analysis Agent** | `stock_analysis_agent.py` | Queries historical stock price data and computes technical indicators. Runs in parallel with News Analysis and SEC Filing Analysis. |
-| **Risk Insight Agent** | `risk_insight_agent.py` | Receives the parallel outputs from the three analysis agents along with the impact assessment (including the `indirect_chain` or `direct` classification) from the **Event to Impact Mapping** node, and combines them with the client's risk profile and Mem0 preferences to produce the final personalized advice. Alert workflow only; in the AskAI workflow, the Ask AI Agent performs this final compilation step instead. |
+| **Risk Insight Agent** | `risk_insight_agent.py` | Receives the parallel outputs from the three analysis agents along with the impact assessment (including the `indirect_chain` or `direct` classification) from the **Client Impact Analysis** node, and combines them with the client's risk profile and Mem0 preferences to produce the final personalized advice. Alert workflow only; in the AskAI workflow, the Ask AI Agent performs this final compilation step instead. |
 | **Ask AI Agent** | `ask_ai_agent.py` | Entry and exit point for the AskAI workflow. Decides whether to answer a query directly or pass it to the Planning Agent, then compiles the final response from analysis agent outputs. Also retrieves client alerts, classifies risk profiles, and manages conversation history via Mem0. |
 
 ### 📚 Knowledge Base: PDF-Backed RAG
@@ -256,17 +248,15 @@ Query → Ask AI Agent → Planning Agent → [News Analysis Agent ‖ SEC Filin
 
 **Alert Workflow** (proactive risk alerts):
 ```
-Event → Event to Impact Mapping (Apache AGE) → Planning Agent → [News Analysis Agent ‖ SEC Filing Analysis Agent ‖ Stock Analysis Agent] → Risk Insight Agent
+Event → Client Impact Analysis (Apache AGE) → Planning Agent → [News Analysis Agent ‖ SEC Filing Analysis Agent ‖ Stock Analysis Agent] → Risk Insight Agent
 ```
 
 ![Alert Workflow Diagram](./docs/imgs/alert-workflow-diagram.png)
 
-- **Nodes vs. Agents**: not every step in the workflow is an agent. **Event to Impact Mapping** is a plain LangGraph node: it queries Apache AGE directly and classifies the connection as `direct` or `indirect_chain`, then passes that structured result downstream. Only the Planning Agent, analysis agents, and Risk Insight Agent perform LLM reasoning.
+- **Nodes vs. Agents**: not every step in the workflow is an agent. **Client Impact Analysis** is a plain LangGraph node: it queries Apache AGE directly and classifies the connection as `direct` or `indirect_chain`, then passes that structured result downstream. Only the Planning Agent, analysis agents, and Risk Insight Agent perform LLM reasoning.
 - **Agents**: each wraps a specific function (SEC retrieval, news analysis, stock data analysis, or risk synthesis). Agents receive structured inputs and return structured outputs consumed by the next node.
 - **Tools**: callable interfaces used within agents to access the knowledge base (annual report PDFs, news PDFs, historical stock price data).
 - **Parallel Execution**: analysis agents run concurrently via `asyncio.gather()` for each resolved company, with isolated OpenTelemetry spans per run for Phoenix tracing.
-
----
 
 ## 💬 Ask AI
 
@@ -296,8 +286,6 @@ This delivers two clear benefits:
 
 Anything you tell Ask AI about a client is captured by Mem0 and reused in future sessions, so prior preferences are already loaded and shaping agent selection the next time you open that client's Ask AI.
 
----
-
 ## 🧠 Smart Query Routing via Tool-Enabled Agent
 
 The **Ask AI Agent** interprets your queries and dynamically selects the right tool, enabling a seamless, natural-language interface.
@@ -322,8 +310,6 @@ The Ask AI Agent is equipped with the following tools:
 
 - **Clear Preferences**
   `"Clear all preferences for this client."` → Ask AI calls `clear_client_preferences` to remove all stored preferences and the risk profile.
-
----
 
 ## 🔍 Understanding What Queries Work (and Why)
 
@@ -384,8 +370,6 @@ The system supports **synonyms and close variations** of company names and ticke
 
 Even if a ticker is supported, the system needs relevant **10-K and news content** in the ingested PDF corpus to generate a high-quality recommendation. If no PDFs are available for a company, the recommendation falls back to stock price signals alone and may be less comprehensive.
 
----
-
 ## 🧪 Sample Queries That Work
 
 Use the examples below to test how the client-scoped **Ask AI** chat and advisory system behave.
@@ -398,8 +382,6 @@ Use the examples below to test how the client-scoped **Ask AI** chat and advisor
 
 Because no client preferences are stored yet, the response is grounded purely in recent news. The Planner triggers only the **News Analysis Agent**, matching the explicit news anchor in the query.
 
----
-
 **Step 2: Preference capture and personalized re-analysis** (stores Mem0 preference, re-routes agents):
 
 > *"Daniel generally prefers stability and avoids taking any sort of risk."*
@@ -409,14 +391,10 @@ The system:
 - Re-runs the analysis, this time triggering **SEC Filing Analysis Agent** and **Stock Analysis Agent** alongside the previous news data
 - Refines its company suggestion to one aligned with keeping money safe rather than chasing recent news
 
----
-
 **General queries** (questions about how markets work, answered directly with no agents invoked):
 
 - *"Based on news, which companies are performing well?"*
 - *"How balanced is [Client Name]'s portfolio under current market conditions?"*
 - *"What market developments could create opportunities for [Client Name]?"*
-
----
 
 > 💡 If a data source is partially available, the system will use what it has and note any gaps in the recommendation output.

@@ -465,16 +465,41 @@ export const WorkflowErrorWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: ${({ theme }) => theme.spacing[3]};
+  gap: ${({ theme }) => theme.spacing[4]};
   padding: ${({ theme }) => theme.spacing[8]};
   text-align: center;
 `;
 
+export const WorkflowErrorCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[4]};
+  background: #fff5f5;
+  border: 1.5px solid #fca5a5;
+  border-radius: 16px;
+  padding: ${({ theme }) => theme.spacing[8]} ${({ theme }) => theme.spacing[10]};
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(220, 38, 38, 0.08);
+`;
+
+export const WorkflowErrorIconCircle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fee2e2;
+  flex-shrink: 0;
+`;
+
 export const WorkflowErrorTitle = styled.p`
   font-family: ${({ theme }) => theme.typography.fontFamily.primary};
-  font-size: ${({ theme }) => theme.typography.fontSize.base};
+  font-size: ${({ theme }) => theme.typography.fontSize.lg};
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.contentPrimary};
+  color: #b91c1c;
   margin: 0;
 `;
 
@@ -482,8 +507,8 @@ export const WorkflowErrorBody = styled.p`
   font-family: ${({ theme }) => theme.typography.fontFamily.primary};
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
   font-weight: ${({ theme }) => theme.typography.fontWeight.normal};
-  color: ${({ theme }) => theme.colors.disabledText};
+  color: #6b7280;
   margin: 0;
-  max-width: 340px;
+  max-width: 320px;
   line-height: ${({ theme }) => theme.typography.lineHeight.normal};
 `;

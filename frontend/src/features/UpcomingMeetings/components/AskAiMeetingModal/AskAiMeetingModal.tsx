@@ -65,6 +65,8 @@ import {
   WorkflowSkeletonEdge,
   WorkflowSkeletonBranch,
   WorkflowErrorWrapper,
+  WorkflowErrorCard,
+  WorkflowErrorIconCircle,
   WorkflowErrorTitle,
   WorkflowErrorBody,
 } from './AskAiMeetingModal.styles';
@@ -208,7 +210,7 @@ export const AskAiMeetingModal: React.FC<AskAiMeetingModalProps> = ({ isOpen, on
   }, [clientAlerts, activeClientName]);
 
   const placeholderOptions = useMemo(() => ({ 'Company Name': relevantCompanies }), [relevantCompanies]);
-  const { data: fetchedGraphData, isFetching: isGraphFetching } = useChatAgentsGraphQuery({
+  const { data: fetchedGraphData, isFetching: isGraphFetching, isError: isGraphError } = useChatAgentsGraphQuery({
     clientId: selectedClientId,
     sessionId: selectedSessionId,
     turnId: latestTurnId,
@@ -368,7 +370,7 @@ export const AskAiMeetingModal: React.FC<AskAiMeetingModalProps> = ({ isOpen, on
   const mem0Used = messages.some((m) => m.role === 'assistant' && m.memorySaved);
   const workflowGraph = latestTurnId === null ? NULL_TURN_WORKFLOW_GRAPH : (fetchedGraphData?.graph ?? null);
   // true when the fetch finished but the server had no graph for this turn (404)
-  const isGraphUnavailable = latestTurnId !== null && !isGraphFetching && fetchedGraphData === null;
+  const isGraphUnavailable = latestTurnId !== null && !isGraphFetching && (fetchedGraphData === null || isGraphError);
   const agentsOutput = fetchedGraphData?.agentsOutput;
 
   return (
@@ -494,10 +496,19 @@ export const AskAiMeetingModal: React.FC<AskAiMeetingModalProps> = ({ isOpen, on
                 </WorkflowSkeletonOuter>
               ) : isGraphUnavailable ? (
                 <WorkflowErrorWrapper>
-                  <WorkflowErrorTitle>Workflow data unavailable</WorkflowErrorTitle>
-                  <WorkflowErrorBody>
-                    The agent graph couldn't be loaded for this response. Try toggling the workflow view off and on, or send a new message.
-                  </WorkflowErrorBody>
+                  <WorkflowErrorCard>
+                    <WorkflowErrorIconCircle>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="#DC2626" strokeWidth="2" />
+                        <path d="M12 7v5.5" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" />
+                        <circle cx="12" cy="16.5" r="1.25" fill="#DC2626" />
+                      </svg>
+                    </WorkflowErrorIconCircle>
+                    <WorkflowErrorTitle>Workflow data unavailable</WorkflowErrorTitle>
+                    <WorkflowErrorBody>
+                      The agent graph couldn't be loaded for this response. Try toggling the workflow view off and on, or send a new message.
+                    </WorkflowErrorBody>
+                  </WorkflowErrorCard>
                 </WorkflowErrorWrapper>
               ) : (
                 <WorkflowView

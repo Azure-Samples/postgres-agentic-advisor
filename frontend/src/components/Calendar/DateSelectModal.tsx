@@ -47,7 +47,7 @@ type ModalView = 'presets' | 'custom';
  */
 const DateSelectModal: React.FC<DateSelectModalProps> = ({ isOpen, onClose, currentValue, onConfirm }) => {
   const [view, setView] = useState<ModalView>('presets');
-  const [staged, setStaged] = useState<Date | null>(currentValue ?? PRESET_DATES[0]);
+  const [staged, setStaged] = useState<Date | null>(currentValue ?? null);
   const [viewMonth, setViewMonth] = useState<number>(currentValue?.getMonth() ?? PRESET_DATES[0].getMonth());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
 
@@ -55,7 +55,7 @@ const DateSelectModal: React.FC<DateSelectModalProps> = ({ isOpen, onClose, curr
   useEffect(() => {
     if (isOpen) {
       setView('presets');
-      setStaged(currentValue ?? PRESET_DATES[0]);
+      setStaged(currentValue ?? null);
       setViewMonth(currentValue?.getMonth() ?? PRESET_DATES[0].getMonth());
       setShowMonthPicker(false);
     }

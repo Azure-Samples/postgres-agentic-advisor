@@ -130,7 +130,7 @@ class AskAITraceParser:
                         },
                     )
                     agent_outputs[node_id] = {
-                        "input": aggregated["inputs"],
+                        "input": aggregated["input"],
                         "output": aggregated["output"],
                         "reasoning": aggregated["reasoning"],
                         "sources": aggregated["sources"],
@@ -183,7 +183,7 @@ class AskAITraceParser:
                 },
             )
             agent_outputs[node_id] = {
-                "input": aggregated["inputs"],  # list of per-company inputs
+                "input": aggregated["input"],  # combined input across all companies
                 "output": aggregated["output"],  # combined output string
                 "reasoning": aggregated["reasoning"],
                 "sources": aggregated["sources"],
@@ -209,7 +209,7 @@ class AskAITraceParser:
 
         Returns:
             {
-                "inputs":           list[str | None],  # one entry per company
+                "input":            str,  # combined input across all companies
                 "output":           str,               # newline-joined outputs
                 "reasoning":        str | None,
                 "sources":          list | None,
@@ -264,9 +264,10 @@ class AskAITraceParser:
                 all_sources.extend(sources)
 
         combined_output = "\n\n---\n\n".join(outputs) if outputs else None
+        combined_input = "\n\n---\n\n".join(inputs) if inputs else None
 
         return {
-            "inputs": inputs or None,
+            "input": combined_input,
             "output": combined_output,
             "reasoning": "\n\n".join(reasonings) if reasonings else None,
             "sources": list(dict.fromkeys(all_sources)) if all_sources else None,

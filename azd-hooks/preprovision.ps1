@@ -58,7 +58,6 @@ else
 
 # Detect the public IP of the deploying machine
 # Primary: ipify.org | Fallback: nslookup via OpenDNS (IPv4 only)
-Write-Host "Detecting deployer public IP..." -ForegroundColor Cyan
 
 function Get-PublicIpViaNslookup {
     try {
@@ -96,7 +95,7 @@ try {
         Write-Host "WARNING: ipify.org returned non-IPv4 response: $clientIp" -ForegroundColor Yellow
         $clientIp = $null
     } else {
-        Write-Host "Deployer public IP detected via ipify.org: $clientIp" -ForegroundColor Green
+        # valid IPv4 detected — silent, final message printed below
     }
 } catch {
     Write-Host "WARNING: ipify.org unreachable — trying nslookup fallback..." -ForegroundColor Yellow
@@ -104,21 +103,17 @@ try {
 
 # Fallback: nslookup via OpenDNS (IPv4 only)
 if (-not $clientIp) {
-    Write-Host "Attempting nslookup fallback via OpenDNS..." -ForegroundColor Yellow
     $clientIp = Get-PublicIpViaNslookup
-    if ($clientIp) {
-        Write-Host "Deployer public IP detected via nslookup: $clientIp" -ForegroundColor Green
-    } else {
-        Write-Host "WARNING: nslookup fallback also failed — firewall rule for local machine will be skipped." -ForegroundColor Yellow
+    if (-not $clientIp) {
+        Write-Host "WARNING: Could not detect public IP — firewall rule for local machine will be skipped." -ForegroundColor Yellow
     }
 }
 
 if ($clientIp) {
     azd env set "DEPLOYER_PUBLIC_IP" $clientIp
-    Write-Host "Deployer public IP set to: $clientIp" -ForegroundColor Green
+    Write-Host "Public IP: $clientIp"
 } else {
     azd env set "DEPLOYER_PUBLIC_IP" ""
-    Write-Host "Deployer public IP not set — firewall rule for local machine will be skipped." -ForegroundColor Yellow
 }
 
 

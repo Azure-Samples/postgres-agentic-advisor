@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '../Navbar';
-import { StyledContent, StyledLayout } from './Layout.styles';
+import { StyledContent, StyledLayout, DisclaimerBar } from './Layout.styles';
 
 /**
  * The main application layout component that provides the structural foundation for all pages.
@@ -46,6 +46,10 @@ export const Layout: React.FC = () => {
       <StyledContent>
         <Outlet />
       </StyledContent>
+      <DisclaimerBar>
+        <span style={{ fontWeight: 500 }}>Disclaimer:&nbsp;</span>
+        <span style={{ fontWeight: 400 }}>This content is for demonstration and educational purposes only and does not constitute financial, investment, or trading advice.</span>
+      </DisclaimerBar>
     </StyledLayout>
   );
 };

@@ -26,9 +26,9 @@ A built-in **date picker** lets you jump to any business date, ideal for walking
 
 Click the **date picker** on the dashboard, which is currently set to today's date. This opens a modal where any business date can be selected.
 
-The picker **highlights October 24th** as a recommended starting point, a date with particularly active market news, making it easy to land immediately in a scenario with rich alert data.
+The picker **highlights two recommended dates** with particularly active market news: **October 24th** and **November 20th**, making it easy to land immediately in a scenario with rich alert data.
 
-Selecting October 24th refreshes the dashboard to show alerts, trends, and portfolio state for that date.
+Selecting either date refreshes the dashboard to show alerts, trends, and portfolio state for that date.
 
 ![Date Picker Modal](./docs/imgs/date_picker_modal.png)
 
@@ -59,13 +59,13 @@ Clicking **View Summary** on an alert tile opens the **Insight modal**, which sh
 From the modal, clicking **Show Workflow** opens a live trace of the agents that produced the alert:
 
 ```
-Event → Event to Impact Mapping (Apache AGE) → Planning Agent → [News Analysis Agent | SEC Filing Analysis Agent | Stock Analysis Agent] → Risk Insight Agent
+Event → Client Impact Analysis (Apache AGE) → Planning Agent → [News Analysis Agent | SEC Filing Analysis Agent | Stock Analysis Agent] → Risk Insight Agent
 ```
 
-- **Event to Impact Mapping** uses **Apache AGE** to trace the company relationship graph and determine whether the impact is direct or through multiple connected companies; the result (e.g., `indirect_chain`) flows through the workflow state to the Risk Insight Agent
+- **Client Impact Analysis** uses **Apache AGE** to trace the company relationship graph and determine whether the impact is direct or through multiple connected companies; the result (e.g., `indirect_chain`) flows through the workflow state to the Risk Insight Agent
 - **Planning Agent** decides which analysis agents to run based on client preferences and risk profiles retrieved from Mem0
 - The analysis agents (**News Analysis Agent**, **SEC Filing Analysis Agent**, **Stock Analysis Agent**) run in parallel; for a fresh proactive alert, typically all three fire
-- **Risk Insight Agent** combines those outputs with the impact assessment from Event to Impact Mapping, **client portfolio context**, and any **Mem0 preferences** to produce the final, personalized advice
+- **Risk Insight Agent** combines those outputs with the impact assessment from Client Impact Analysis, **client portfolio context**, and any **Mem0 preferences** to produce the final, personalized advice
 
 Clicking any agent node in the workflow opens that agent's specific input and output, giving you full visibility into what it received and what it produced.
 
@@ -133,7 +133,8 @@ The core recommendation is unchanged, but a **personalization layer** is now act
 To validate that the proactive advisory was correct, use the date picker to **jump forward past the impacted company's earnings date (e.g. November 20)**:
 
 - The position the system advised reducing shows a **clear declining trend** after the earnings release
-- The position suggested as a reinvestment target shows an **upward trend** driven by sustained demand
+
+Note: the client who was initially holding Zava sold the stock on **November 1st** (per the app calendar), which is why they no longer appear as holding it on November 20th.
 
 This closes the loop: an **indirect risk signal traced through company connections**, processed by a **multi-agent workflow** and personalized through **Mem0**, produced a recommendation that played out in the market exactly as expected.
 

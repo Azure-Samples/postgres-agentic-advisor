@@ -4,7 +4,7 @@ export const NavbarContainer = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing[8]};
+  padding: 0 ${({ theme }) => theme.spacing[8]} 0 calc(${({ theme }) => theme.spacing[8]} - 4px);
   background: ${({ theme }) => theme.colors.white};
   border-bottom: ${({ theme }) => theme.border.light};
   box-shadow: ${({ theme }) => theme.shadows.sm};

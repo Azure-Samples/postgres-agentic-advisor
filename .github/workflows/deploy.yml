@@ -1,0 +1,172 @@
+name: Build and Deploy to Azure Container Apps (Backend & Frontend)
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+
+## Using repository variables (Settings > Variables) for non-secrets
+## Required vars: ACR_NAME, REGISTRY_LOGIN_SERVER, RESOURCE_GROUP, CONTAINER_APP_NAME_BACKEND, CONTAINER_APP_NAME_FRONTEND
+
+jobs:
+  detect-changes:
+    name: Detect changed folders
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Folder change check
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          base: ${{ github.event.before }}
+          ref: ${{ github.sha }}
+          initial-fetch-depth: 0
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+      - name: Debug changed files
+        run: |
+          echo "backend changed? ${{ steps.filter.outputs.backend }}"
+          echo "frontend changed? ${{ steps.filter.outputs.frontend }}"
+          echo "Comparing ${{ github.event.before }} -> ${{ github.sha }}"
+          git --no-pager diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | sed -n '1,200p'
+
+  backend-build-and-deploy:
+    name: Backend - Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      security-events: write
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.infra == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUB_ID }}
+
+      - name: Ensure Container Apps extension
+        run: |
+          az extension add --name containerapp --upgrade -y
+
+      - name: Log in to Azure Container Registry (ACR)
+        run: |
+          az acr login --name ${{ vars.ACR_NAME }}
+
+      - name: Build Docker image (Backend) with short commit SHA tag
+        run: |
+          COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
+          echo "IMAGE_TAG=$COMMIT_ID" >> $GITHUB_ENV
+          docker build \
+            -f backend/Dockerfile \
+            -t ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/backend:$COMMIT_ID \
+            backend
+
+      - name: Run Trivy vulnerability scanner on Backend container
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/backend:${{ env.IMAGE_TAG }}
+          format: "sarif"
+          output: "trivy-backend-results.sarif"
+
+      # MODIFIED: Upload report as Artifact instead of Security Tab
+      - name: Upload Trivy scan results as Artifact (Backend)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-trivy-report
+          path: "trivy-backend-results.sarif"
+          retention-days: 90
+
+      - name: Push image to ACR (Backend)
+        run: |
+          docker push ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/backend:$IMAGE_TAG
+
+      - name: Deploy to Azure Container Apps (Backend)
+        run: |
+          az containerapp update \
+            --name ${{ vars.CONTAINER_APP_NAME_BACKEND }} \
+            --resource-group ${{ vars.RESOURCE_GROUP }} \
+            --image ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/backend:$IMAGE_TAG
+
+  frontend-build-and-deploy:
+    name: Frontend - Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      security-events: write
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.infra == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUB_ID }}
+
+      - name: Ensure Container Apps extension
+        run: |
+          az extension add --name containerapp --upgrade -y
+
+      - name: Log in to Azure Container Registry (ACR)
+        run: |
+          az acr login --name ${{ vars.ACR_NAME }}
+
+      - name: Build Docker image (Frontend) with short commit SHA tag
+        run: |
+          COMMIT_ID=$(git rev-parse --short "$GITHUB_SHA")
+          echo "IMAGE_TAG=$COMMIT_ID" >> $GITHUB_ENV
+          cd frontend
+          echo "VITE_API_BASE_URL=https://rt-backend.politesmoke-8e5f69a9.westus3.azurecontainerapps.io" >> .env.local
+          docker build \
+            -f Dockerfile \
+            -t ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/frontend:$COMMIT_ID \
+            .
+
+      - name: Run Trivy vulnerability scanner on User Portal container
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/frontend:${{ env.IMAGE_TAG }}
+          format: "sarif"
+          output: "trivy-frontend-results.sarif"
+
+      # MODIFIED: Upload report as Artifact instead of Security Tab
+      - name: Upload Trivy scan results as Artifact (Frontend)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-trivy-report
+          path: "trivy-frontend-results.sarif"
+          retention-days: 90
+
+      - name: Push image to ACR (Frontend)
+        run: |
+          docker push ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/frontend:$IMAGE_TAG
+
+      - name: Deploy to Azure Container Apps (Frontend)
+        run: |
+          az containerapp update \
+            --name ${{ vars.CONTAINER_APP_NAME_FRONTEND }} \
+            --resource-group ${{ vars.RESOURCE_GROUP }} \
+            --image ${{ vars.REGISTRY_LOGIN_SERVER }}/agentic-advisor/frontend:$IMAGE_TAG

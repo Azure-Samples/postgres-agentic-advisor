@@ -96,11 +96,6 @@ if ($deployOpenAI -eq 'false') {
     if (-not [string]::IsNullOrWhiteSpace($kvName)) {
         $azureOpenAiKey = az keyvault secret show --vault-name $kvName --name 'azure-openai-api-key' --query value -o tsv 2>$null
     }
-    if (-not [string]::IsNullOrWhiteSpace($azureOpenAiKey)) {
-        Write-Host "  ✓ AZURE_OPENAI_API_KEY fetched from Key Vault" -ForegroundColor Green
-    } else {
-        Write-Host "  ⚠️  AZURE_OPENAI_API_KEY could not be retrieved from Key Vault" -ForegroundColor Yellow
-    }
 
     $openAISection = @"
 # OpenAI Configuration (Managed Identity Auth)

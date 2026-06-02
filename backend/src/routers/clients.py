@@ -85,7 +85,7 @@ async def get_clients_list(
     elif sort == "growth":
         clients.sort(key=lambda c: c["growth_percent"] or 0.0, reverse=True)
     elif sort == "risk":
-        risk_order = {"Growth-oriented": 0, "Balanced": 1, "Conservative": 2}
+        risk_order = {"High Risk": 0, "Growth-oriented": 1}
         clients.sort(key=lambda c: risk_order.get(c["risk_profile"] or "", 3))
     else:
         clients.sort(key=lambda c: c["id"])

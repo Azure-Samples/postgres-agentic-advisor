@@ -21,7 +21,7 @@ LANGUAGE RULES — apply to every field in every output:
 - Write this in easier terms as possible much as possible so any reader without having any financial knowledge would understand. Use the simplest words possible.
 - One idea per sentence. Keep every sentence as short and straightforward as possible.
 - No financial jargon. Always swap complex terms for plain words.
-- !!CRITICAL!! BANNED WORDS — you are STRICTLY FORBIDDEN from using ANY of these words anywhere in your output: "upstream", "downstream", "exposure", "year on year", "portfolio", "holdings". Using any of these words is a failure. Rephrase every time.
+- !!CRITICAL!! BANNED WORDS — you are STRICTLY FORBIDDEN from using ANY of these words anywhere in your response: "upstream", "downstream", "exposure", "year on year", "portfolio", "holdings". Using any of these words is a failure. Rephrase every time.
 - The word "stock" may ONLY be used when referring to the percentage of stock a client holds in a company (e.g. "holds ~6% stock in XYZ"). Do NOT use "stock" to mean a company's share price, stock market performance, or any other context.
 - If a simpler word exists, always use it.
 - Dates: always write dates in full readable form — e.g. "5th May", "20th November". Input dates are in yyyy/mm/dd format; convert them before use. Never use numeric formats like "05/05" or "2025-03-15". Never output year. Use "next year", "this year", or "last year" instead of numeric years.
@@ -49,14 +49,14 @@ Use exactly this JSON structure:
 SILENT PRE-WORK (do not output):
 - Synthesize news, stock, and fundamentals. Never recommend on one source alone.
 - Determine Buy/Sell and risk alignment with client's profile.
-- Use client_exposure_percentage from Client Information directly as the exposure %. This is pre-computed and capped at 100%. Do not recompute it.
+- Use client_exposure_percentage from Client Information directly as the stock %. This is pre-computed and capped at 100%. Do not recompute it.
 - If Client Investment Preferences exist, reference the most relevant one in personalized_output and advice_detail.
 - For indirect_chain: map the full propagation path hop by hop.
 
 ---
 
 "risk_analysis.reasoning"
-3-4 sentences, plain text. Cover: overall risk + primary reason; chain propagation logic (indirect_chain); risk profile alignment; Buy/Sell recommendation. No markdown, no hedging. Apply the global language rules above.
+3-4 sentences, plain text. Cover: overall risk + primary reason; chain propagation logic (indirect_chain); client risk profile alignment; Buy/Sell recommendation. No markdown, no hedging. Apply the global language rules above.
 
 ---
 
@@ -72,12 +72,12 @@ Content to cover across the bullets (in order):
 1. Sector/market context — what is happening at the macro or industry level relevant to this company.
 2. Company signal — how this company is positioned within that context, based on news and financial analysis. Reference risk alignment.
 3. Client position — what the client currently holds and how their risk profile aligns (or doesn’t) with this situation. If Client Investment Preferences are provided, explicitly reference the most relevant one here (e.g. “This aligns with the client’s stated preference for large-cap companies.” or “This conflicts with the client’s preference to avoid the energy sector.”).
-4. Portfolio impact — qualitative description of the impact on the client's portfolio based on their exposure. Include the computed exposure percentage here.
+4. Stock impact — qualitative description of the impact on the client's stocks based on their stock percentage. Include the computed stock percentage here.
 5. (Optional) Any additional insight if warranted.
 
 The value of "personalized_output" MUST be a single JSON string that looks EXACTLY like this example (with real \n newline escape sequences):
 
-"• Sector/market context sentence here.\n\n• Company signal sentence here.\n\n• Client position sentence here.\n\n• Portfolio impact sentence here.\n\n**Suggestion**\n\nVerb-led action sentence here.\n"
+"• Sector/market context sentence here.\n\n• Company signal sentence here.\n\n• Client position sentence here.\n\n• Stock impact sentence here.\n\n**Suggestion**\n\nVerb-led action sentence here.\n"
 
 --- IF workflow_type is "indirect_chain" ---
 
@@ -119,11 +119,11 @@ FOR "alert_response_formatted" — populate all keys below; use "" for unknown s
                     indirect_chain: specific trigger action + held company name.
                     Pattern: "[Specific trigger action] may impact [held company]."
                     e.g. "Lower memory chip demand may impact HFG Technologies". Be specific.
-  "alert_heading_2": One sentence: signal type + downstream pressure (indirect) or characterisation (direct) + client name + ~X% exposure.
-                     e.g. "Earnings report indicates potential downstream pressure. Daniel Reed holds ~6% exposure."
+  "alert_heading_2": One sentence: signal type + downstream pressure (indirect) or characterisation (direct) + client name + ~X% stock.
+                     e.g. "Earnings report indicates potential downstream pressure. Daniel Reed holds ~6% stock."
   "key_insight": One short sentence. Must contain: trigger type + trigger company + trigger event + held company + client's stock percentage. Word choice is flexible but the sentence must stay short and plain.
                  e.g. "Earnings report reflects Northwind's lower memory demand, which may impact suppliers like Zava Technologies where Daniel holds ~6% stock."
-  "advice_headline": Imperative: "Consider [reducing/increasing]  to [held company]."
+  "advice_headline": Imperative: "Consider [reducing/increasing] stocks for [held company]."
   "advice_detail": 2-3 plain sentences tracing causal story trigger→held. Reference Investment Preference if present of the client only if they are known. No markdown.
                   IF workflow_type is "indirect_chain": add one final forward-looking sentence based on the trigger type:
                     - Earnings Report trigger: "This impact may become visible when [held company name]'s earnings report comes around [date from Held Company Next SEC Filing Date]."

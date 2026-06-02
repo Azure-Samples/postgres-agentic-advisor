@@ -31,6 +31,29 @@ param scriptIdentityId string
 param deployerPublicIp string = ''
 
 
+// ── HorizonDB Parameter Group (pre-approves extensions — required since API update) ──
+// Must be created before the cluster and attached via parameterGroup.id.
+// Without this, CREATE EXTENSION will fail for vector, pg_diskann, azure_ai, age.
+resource horizonDbParamGroup 'Microsoft.HorizonDb/parameterGroups@2026-01-20-preview' = {
+  name: '${clusterName}-params'
+  location: location
+  properties: {
+    applyImmediately: true
+    description: 'Pre-approves PostgreSQL extensions required by Agentic Advisor'
+    parameters: [
+      {
+        name: 'azure.extensions'
+        value: 'vector,pg_diskann,azure_ai,age'
+      }
+      {
+        name: 'shared_preload_libraries'
+        value: 'age'
+      }
+    ]
+    pgVersion: int(version)
+  }
+}
+
 // ── HorizonDB Cluster (native Bicep — Microsoft.HorizonDb/clusters@2026-01-20-preview) ──
 resource horizonDbCluster 'Microsoft.HorizonDb/clusters@2026-01-20-preview' = {
   name: clusterName
@@ -42,6 +65,10 @@ resource horizonDbCluster 'Microsoft.HorizonDb/clusters@2026-01-20-preview' = {
     vCores: vCores
     replicaCount: replicaCount
     version: version
+    parameterGroup: {
+      id: horizonDbParamGroup.id
+      applyImmediately: true
+    }
   }
 }
 
@@ -78,22 +105,30 @@ resource setupScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
       { name: 'PGSSLMODE',    value: 'require' }
       { name: 'APP_DB',       value: 'agentic_advisor' }
       { name: 'ARM_ENDPOINT', value: environment().resourceManager }
-      { name: 'CLUSTER_NAME', value: clusterName }
-      { name: 'POOL_NAME',    value: 'pool1' }
+      { name: 'CLUSTER_NAME',    value: clusterName }
+      { name: 'PARAM_GROUP_NAME', value: '${clusterName}-params' }
+      { name: 'POOL_NAME',        value: 'pool1' }
       { name: 'DEPLOYER_PUBLIC_IP', value: deployerPublicIp }
     ]
     scriptContent: '''
       #!/bin/bash
       set -e
 
+      # ── Step 0: Attach parameter group to cluster via PATCH (must run after cluster is Succeeded) ──
+      echo "=== Attaching parameter group '${PARAM_GROUP_NAME}' to cluster ==="
+      SUBSCRIPTION=$(az account show --query id -o tsv)
+      RG=$(echo "$AZ_SCRIPTS_USER_ASSIGNED_IDENTITY" | cut -d'/' -f5)
+      PARAM_GROUP_ID="/subscriptions/${SUBSCRIPTION}/resourceGroups/${RG}/providers/Microsoft.HorizonDb/parameterGroups/${PARAM_GROUP_NAME}"
+      az rest --method PATCH \
+        --url "${ARM_ENDPOINT%/}/subscriptions/${SUBSCRIPTION}/resourceGroups/${RG}/providers/Microsoft.HorizonDb/clusters/${CLUSTER_NAME}?api-version=2026-01-20-preview" \
+        --body "{\"properties\":{\"parameterGroup\":{\"id\":\"${PARAM_GROUP_ID}\",\"applyImmediately\":true}}}" \
+        2>&1 && echo "Parameter group attached." || echo "WARNING: Parameter group attach failed — continuing anyway"
+
+      echo "=== Waiting 30s for parameter group to propagate ==="
+      sleep 30
+
       # ── Step 1: Add firewall rule via az rest (pool1 exists once cluster is Succeeded) ──
       echo "=== Adding firewall rule via Azure REST API ==="
-      SUBSCRIPTION=$(az account show --query id -o tsv)
-      RESOURCE_GROUP=$(az resource show --ids "$AZ_SCRIPTS_USER_ASSIGNED_IDENTITY" --query resourceGroup -o tsv 2>/dev/null || echo "")
-
-      # Get resource group from the identity resource ID passed as env var
-      RG=$(echo "$AZ_SCRIPTS_USER_ASSIGNED_IDENTITY" | cut -d'/' -f5)
-
       az rest --method PUT \
         --url "${ARM_ENDPOINT%/}/subscriptions/${SUBSCRIPTION}/resourceGroups/${RG}/providers/Microsoft.HorizonDb/clusters/${CLUSTER_NAME}/pools/${POOL_NAME}/firewallRules/AllowAzureServices?api-version=2026-01-20-preview" \
         --body '{"properties":{"startIpAddress":"0.0.0.0","endIpAddress":"0.0.0.0","description":"Allow Azure services"}}' \

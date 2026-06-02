@@ -5,7 +5,7 @@ export const ClientsWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[4]};
   overflow: hidden;
-  height: calc(100vh - 136px);
+  height: calc(100vh - 145px);
 `;
 
 export const TypographyWrapper = styled.div`

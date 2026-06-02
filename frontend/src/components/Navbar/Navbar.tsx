@@ -158,7 +158,7 @@ const Navbar: React.FC<NavbarProps> = ({ className, style }) => {
     <NavbarContainer className={className} style={style}>
       <NavbarLeft>
         <LogoContainer>
-          <LogoIcon>A</LogoIcon>
+          <img src="/agentic-adv-logo.png" alt="Agentic Advisor" style={{ height: '60px', width: '60px', objectFit: 'contain' }} />
           <LogoText>Agentic Advisor</LogoText>
         </LogoContainer>
       </NavbarLeft>
