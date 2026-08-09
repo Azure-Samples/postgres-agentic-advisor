@@ -21,7 +21,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.9.3",
+    "react-router-dom": "^7.18.2",
     "recharts": "^3.6.0",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
